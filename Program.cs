@@ -105,6 +105,14 @@ namespace linq
             //     Console.WriteLine(number);
             // }
 
+            // Create some banks and store in a List
+            List<Bank> banks = new List<Bank>() {
+                new Bank(){ Name="First Tennessee", Symbol="FTB"},
+                new Bank(){ Name="Wells Fargo", Symbol="WF"},
+                new Bank(){ Name="Bank of America", Symbol="BOA"},
+                new Bank(){ Name="Citibank", Symbol="CITI"},
+            };
+
             List<Customer> customers = new List<Customer>() {
                 new Customer(){ Name="Bob Lesman", Balance=80345.66, Bank="FTB"},
                 new Customer(){ Name="Joe Landy", Balance=9284756.21, Bank="WF"},
@@ -118,21 +126,70 @@ namespace linq
                 new Customer(){ Name="Sid Brown", Balance=49582.68, Bank="CITI"}
             };
 
-            IEnumerable<Customer> Millionaires = customers.FindAll(customer => customer.Balance >= 1000000);
+            IEnumerable<Customer> Millionaires = customers.Where(customer => customer.Balance >= 1000000);
 
             // foreach(Customer customer in Millionaires)
             // {
             //     Console.WriteLine(customer.Name);
             // }
+            
+            Dictionary<string, int> list = new Dictionary<string, int>();
+
+            foreach(Customer millionaire in Millionaires)
+            {
+                if(list.ContainsKey(millionaire.Bank))
+                {
+                    list[millionaire.Bank] += 1;
+                }
+                else
+                {
+                    list[millionaire.Bank] = 1;
+                }
+            }
+
+            // foreach(KeyValuePair<string, int> key in list)
+            // {
+            //     Console.WriteLine(key);
+            // }
+
+
+
+
+
+            var report = from bank in banks
+            join m in Millionaires
+            on bank.Symbol equals m.Bank
+            into mg
+            from m_g in mg
+            select new {
+                CustomerName = m_g.Name,
+                BankName = bank.Name
+            };
+
+
+            foreach(var person in report)
+            {
+                Console.WriteLine($"{person.CustomerName} with {person.BankName}");
+            }
 
 
 
         }
+    }
+    public class Bank
+    {
+        public string Symbol { get; set; }
+        public string Name { get; set; }
     }
     public class Customer
     {
         public string Name { get; set; }
         public double Balance { get; set; }
         public string Bank { get; set; }
+    }
+    public class ReportItem
+    {
+        public string CustomerName { get; set; }
+        public string BankName { get; set; }
     }
 }
