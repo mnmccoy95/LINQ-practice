@@ -166,8 +166,10 @@ namespace linq
                 BankName = bank.Name
             };
 
+            var reportAlpha = report.OrderBy(customer => customer.CustomerName.Split(" ")[1]);
 
-            foreach(var person in report)
+
+            foreach(var person in reportAlpha)
             {
                 Console.WriteLine($"{person.CustomerName} with {person.BankName}");
             }
